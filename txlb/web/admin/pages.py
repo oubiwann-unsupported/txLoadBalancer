@@ -308,13 +308,7 @@ class SaveConfig(BasePage):
         request.setHeader('Content-type', 'text/html')
         if self.isReadOnly(request):
             return "Read Only"
-        didSave = util.saveConfig(self.parent.conf, self.parent.director)
-        if didSave:
-            msg = "Config file '%s' was saved." % self.parent.conf.filename
-        else:
-            msg = ("Config file " + self.parent.conf.filename +
-                   " did not differ from what was in in memory;" +
-                   " file not saved.")
+        msg = util.saveConfig(self.parent.conf, self.parent.director)
         request.redirect('/all?resultMessage=%s' % urllib.quote(msg))
         return "OK"
 
