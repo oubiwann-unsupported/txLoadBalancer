@@ -326,23 +326,11 @@ class DeleteHost(BasePage):
         request.setHeader('Content-type', 'text/html')
         if self.isReadOnly(request):
             return "OK"
-        service = request.args['service'][0]
-        group = request.args['group'][0]
+        serviceName = request.args['service'][0]
+        groupName = request.args['group'][0]
         ip = request.args['ip'][0]
-        tracker = self.parent.director.getTracker(
-            serviceName=service, groupName=group)
-        service = self.parent.conf.getService(service)
-        eg = service.getEnabledGroup()
-        if group == eg.name:
-            if tracker.delHost(ip=ip, activegroup=1):
-                msg = 'host %s deleted (from active group!)' % ip
-            else:
-                msg = 'host %s <b>not</b> deleted from active group' % ip
-        else:
-            if tracker.delHost(ip=ip):
-                msg = 'host %s deleted from inactive group' % ip
-            else:
-                msg = 'host %s <b>not</b> deleted from inactive group' % ip
+        self.parent.editor.delHost(serviceName, groupName, ip)
+        msg = 'host %s removed' % str(ip)
         request.redirect('/all?resultMessage=%s' % urllib.quote(msg))
         return "OK"
 
@@ -432,14 +420,16 @@ class Editor(object):
         group.addHost(name, ip, weight)
     addHost = protect(addHost)
 
-    def delHost(self, serviceName, groupName, name, ip):
+    def delHost(self, serviceName, groupName, ip):
         """
         This method removes a host from the tracker and model (director call)
         as well as the configuration data.
         """
-        self.director.delHost(serviceName, groupName, name, ip)
-        group = self.conf.getService(serviceName).getGroup(groupName)
-        group.delHost(name)
+        group =  self.conf.getService(serviceName).getGroup(groupName)
+        for host in group.getHosts():
+            if host.ip == ip:
+                self.director.delHost(serviceName, groupName, host.name, ip)
+                group.delHost(host.name)
     delHost = protect(delHost)
 
     def switchGroup(self, serviceName, oldGroupName, newGroupName):
