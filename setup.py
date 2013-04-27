@@ -11,6 +11,7 @@ dist.setup(
     url=meta.url,
     packages=dist.findPackages(meta.library_name),
     scripts=["bin/txlb.tac"],
+    install_requires=['twisted', 'pycrypto', 'pyopenssl', 'pyasn1'],
     long_description=dist.catReST(
         "docs/PRELUDE.txt",
         "README",
