@@ -497,6 +497,7 @@ class Config(object):
         self.manager = None
         self.dom = None
         self.control = None
+        self.filename = filename
         dom = self._loadDOM(filename, xml)
         if dom.nodeName != 'config':
             msg = "expected top level 'config', got '%s'" % (dom.nodeName)

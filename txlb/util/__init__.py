@@ -163,11 +163,13 @@ def saveConfig(configuration, director):
     # re-read the one on disk
     disk = txlb.config.Config(configuration.filename).toXML()
     if current != disk:
-        log.msg("Configurations are different; ",
-                "backing up and saving to disk ...")
         # backup old file
         backupFile = "%s-%s" % (
             configuration.filename, datetime.now().strftime('%Y%m%d%H%M%S'))
+        msg =     "Configurations are different; " + \
+                   "backing up to %s and saving to disk as %s" % (
+                        backupFile,configuration.filename)
+        log.msg(msg)
         os.rename(configuration.filename, backupFile)
         # save configuration
         fh = open(configuration.filename, 'w+')
@@ -175,8 +177,10 @@ def saveConfig(configuration, director):
         fh.close()
     # re-enable admin UI
     else:
-        log.msg("Configrations do not differ; skipping write.")
+        msg = "Configrations do not differ; skipping write."
+        log.msg(msg)
     director.setReadWrite()
+    return msg
 
 
 class DummyModule(object):
