@@ -2,6 +2,9 @@
 Introduction
 ============
 
+.. image:: resources/logos/txLoadBalancer_lg.png
+   :align: right
+
 This is a pure python TCP load balancer. It takes inbound TCP connections and
 connects them to one of a number of backend servers.
 
